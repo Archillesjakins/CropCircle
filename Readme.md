@@ -1,4 +1,4 @@
-### 1. Full Workflow of the App
+### 1. Full Workflow of the Application
 
 
 #### **Step 1: Farmer Registration and Verification**
