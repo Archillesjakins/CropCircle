@@ -1,0 +1,11 @@
+{
+  "name": "cropcircle",
+  "version": "1.0.0",
+  "description": "- Farmers create an account and upload verification documents (e.g., business license, farm registration).\r    - The admin reviews and approves farmer profiles. Only verified farmers can list products.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

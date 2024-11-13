@@ -76,7 +76,11 @@ WSGI_APPLICATION = 'farmsales.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': 'CropCircle',
+        'USER': 'backend_team',
+        'PASSWORD': 'Akogo660221.',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
