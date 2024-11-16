@@ -1,7 +1,4 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.utils import timezone
 
@@ -17,7 +14,7 @@ class User(AbstractBaseUser):
     userId = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)  # Password field
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     phone = models.CharField(max_length=15, null=True, blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
@@ -25,18 +22,17 @@ class User(AbstractBaseUser):
     updatedAt = models.DateTimeField(auto_now=True)
     reset_password_token = models.CharField(max_length=36, null=True, blank=True)  # UUID token
     reset_token_created_at = models.DateTimeField(null=True, blank=True)  # Token timestamp
+    last_login = models.DateTimeField(null=True, blank=True)  # Last login timestamp
 
-    
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
 
     def __str__(self):
         return self.name
-    
+
     class Meta:
         db_table = 'User'
         managed = True
-
 
 # 2. Farmer Model
 class Farmer(models.Model):
@@ -47,7 +43,7 @@ class Farmer(models.Model):
     ]
     
     farmerId = models.AutoField(primary_key=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, limit_choices_to={'role': 'farmer'})
+    userId = models.OneToOneField(User, on_delete=models.CASCADE, limit_choices_to={'role': 'farmer'}, related_name='farmer', db_column='userId')
     farmName = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
     farmType = models.CharField(max_length=50)
@@ -72,7 +68,7 @@ class Product(models.Model):
     ]
     
     productId = models.AutoField(primary_key=True)
-    farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE)
+    farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE, db_column='farmerId')
     productName = models.CharField(max_length=255)
     description = models.TextField()
     category = models.CharField(max_length=50)
@@ -100,15 +96,16 @@ class Order(models.Model):
     ]
     
     orderId = models.AutoField(primary_key=True)
-    customer = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': 'customer'})
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, db_column='customerId')
     orderItems = models.JSONField()  # Store an array of products, including productId, quantity, and price
     totalAmount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
+    deliveryDate = models.DateTimeField(null=True, blank=True) 
 
     def __str__(self):
-        return self.orderId
+        return str(self.orderId)
     
     class Meta:
         db_table = 'Order'
@@ -124,7 +121,7 @@ class Cart(models.Model):
     updatedAt = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.customer
+        return str(self.cartId)
     
     class Meta:
         db_table = 'Cart'
@@ -141,7 +138,7 @@ class Review(models.Model):
     updatedAt = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.reviewId
+        return str(self.reviewId)
     
     class Meta:
         db_table = 'Review'
