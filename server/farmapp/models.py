@@ -15,6 +15,7 @@ class User(AbstractBaseUser):
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=255)  # Password field
+    password = models.CharField(max_length=255)  # Password field
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     phone = models.CharField(max_length=15, null=True, blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
@@ -29,6 +30,7 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.name
+
 
     class Meta:
         db_table = 'User'
@@ -95,13 +97,16 @@ class Order(models.Model):
         ('delivered', 'Delivered'),
     ]
     
-    orderId = models.AutoField(primary_key=True)
-    customer = models.ForeignKey(User, on_delete=models.CASCADE, db_column='customerId')
+    # orderId = models.AutoField(primary_key=True)
+    # customer = models.ForeignKey(User, on_delete=models.CASCADE, db_column='customerId')
+    orderId = models.AutoField(primary_key=True)  # Primary key field
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, db_column='customerId')  # ForeignKey to User model
     orderItems = models.JSONField()  # Store an array of products, including productId, quantity, and price
     totalAmount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
+    deliveryDate = models.DateTimeField(null=True, blank=True) 
     deliveryDate = models.DateTimeField(null=True, blank=True) 
 
     def __str__(self):

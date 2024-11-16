@@ -1,0 +1,301 @@
+.order-management {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.filter-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-section select,
+.filter-section input {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+}
+
+.filter-section select:focus,
+.filter-section input:focus {
+  border-color: rgb(22, 163, 74);
+}
+
+.order-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.header-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.order-header p {
+  color: #666;
+  margin: 5px 0 20px;
+}
+
+.see-all-orders {
+  background-color: rgb(22, 163, 74);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.see-all-orders:hover {
+  background-color: rgb(17, 88, 43);
+}
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-left: 4rem;
+  min-height: 400px;
+}
+
+.order-card {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.header-icon {
+  font-size: 32px;
+  color: rgb(22, 163, 74);
+  margin-right: 12px;
+}
+
+.order-card .order-info {
+  flex: 2;
+}
+
+.order-info p {
+  font-weight: bold;
+  margin: 0;
+}
+
+.order-info span {
+  color: #666;
+  font-size: 14px;
+}
+
+.order-details {
+  flex: 1;
+  text-align: center;
+}
+
+.order-amount {
+  font-weight: bold;
+  font-size: 18px;
+  margin: 0;
+}
+
+.order-date {
+  color: #888;
+  font-size: 14px;
+}
+
+.order-status {
+  width: 100px;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 15px;
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+.order-status.completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.order-status.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.order-status.canceled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.view-details {
+  background-color: rgb(22, 163, 74);
+  color: white;
+  border: none;
+  padding: 6px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  width: 150px;
+}
+
+.view-details:hover {
+  background-color: rgb(10, 90, 31);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  text-align: left;
+  position: relative;
+  z-index: 11;
+}
+
+.modal-content h3 {
+  color: #333;
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.modal-content p {
+  color: #666;
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.close-modal {
+  background-color: #dc3545;
+  color: #fff;
+  padding: 5px 15px;
+  cursor: pointer;
+  font-size: 18px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.close-modal:hover {
+  background-color: #c82333;
+}
+
+.primary-button {
+  background-color: rgb(22, 163, 74);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.modal-content {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .order-list {
+    margin-left: 0;
+  }
+
+  .order-card {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .see-all-orders {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .view-details {
+    width: 100%;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-header h2 {
+    font-size: 20px;
+  }
+
+  .order-header p,
+  .header-subtitle {
+    font-size: 12px;
+  }
+
+  .order-card {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-section {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .see-all-orders,
+  .view-details {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .order-amount {
+    font-size: 16px;
+  }
+
+  .order-status {
+    width: auto;
+  }
+}

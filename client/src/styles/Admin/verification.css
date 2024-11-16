@@ -1,0 +1,229 @@
+
+.verificationHeader{
+    display: flex;
+    justify-content: space-between;
+    margin: 30px;
+    align-items: center;
+}
+
+.verificationHeader__left{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.verificationHeader__left h1{
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.verificationContainer{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 50px;
+    margin-left: 80px;
+}
+
+.verificationBody{
+    border: 2px solid #e5e5e5;
+    width: 300px;
+    border-radius: 30px;
+    padding: 20px;
+}
+
+.verificationBody__title .status{
+    color: green;
+    font-size: 1.2rem;
+    text-transform: capitalize;
+    font-weight: 500;
+
+}
+
+.verificationBody__name {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    align-items: center;
+}
+
+.verificationBody__name .verificationBody__name--left{
+    color: green;
+    font-weight: 200;
+}
+
+.verificationBody__name .verificationBody__name--right{
+    font-size: 1.7rem;
+}
+
+.verificationBody__review .icon{
+    display: inline-block;
+    cursor: pointer;
+}
+
+input[type=radio]{
+    display: none;
+
+}
+
+
+
+.verificationBody__Dialog {
+    display: flex;
+   width: 900px;
+   margin: auto;
+   height: 500px;
+   align-items: center;
+   gap: 30px;
+   padding: 0 20px;
+}
+
+.verificationBody__Dialog .closeIcon{
+    position: absolute;
+    left: 90%;
+    top: 10%;
+    font-size: 1.5rem;
+}
+
+
+.verificationBody__Dialog img {
+    width: 500px;
+    height: 300px;
+}
+
+.verificationDialog__description .reviews {
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+.verificationDialog__description  h1{
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+
+.verificationDialog__description .icon{
+    display: inline;
+}
+
+
+
+.verificationBody__Dialog button{
+    width: 200px;
+    border: none;
+    margin: 20px;
+    border-radius: 10px;
+}
+
+.verificationBody__Dialog .approve{
+    color: white;
+    background-color: rgb(18, 220, 18);
+    border: none;
+}
+
+.verificationBody__Dialog .reject {
+    color: red;
+    border: 1px solid #e5e6e5;
+}
+
+.filterIcon{
+    font-size: 2rem;
+    margin-right: 30px;
+    cursor: pointer;
+}
+
+.filterMenu {
+    position: absolute;
+    list-style: none;
+    width: 180px;
+    height: 100px;
+    background-color: grey;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    right: 20px;
+    top: 60px;
+    color: white;
+
+}
+
+.filterMenu ul li{
+    cursor: pointer;
+}
+
+
+@media screen and (max-width: 1000px) {
+  .verificationContainer{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 50px;
+    margin-left: 30px;
+}
+
+.verificationBody{
+    border: 2px solid #e5e5e5;
+    width: 300px;
+    border-radius: 30px;
+    padding: 20px;
+}
+
+.verificationBody__Dialog {
+    display: flex;
+   width: 600px;
+   margin: auto;
+   height: 400px;
+   align-items: center;
+   gap: 30px;
+   padding: 0 20px;
+}
+
+.verificationBody__Dialog img {
+    width: 400px;
+    height: 200px;
+}
+  
+    
+
+}
+
+@media screen and (max-width: 700px) {
+  .verificationContainer{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 50px;
+    margin-left: 70px;
+}
+
+.verificationBody{
+    border: 2px solid #e5e5e5;
+    width: 400px;
+    border-radius: 30px;
+    padding: 20px;
+}
+
+.verificationBody__Dialog {
+    display: flex;
+   width: 400px;
+   margin: auto;
+   height: 500px;
+   align-items: center;
+   gap: 30px;
+   padding: 0 20px;
+}
+
+.verificationBody__Dialog img {
+    width: 600px;
+    height: 200px;
+}
+
+.verificationBody__Dialog .closeIcon{
+    position: absolute;
+    left: 90%;
+    top: 5%;
+    font-size: 1.5rem;
+}
+    
+
+}
