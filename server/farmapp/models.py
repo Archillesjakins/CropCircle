@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.utils import timezone
 
+
 # 1. User Model
 class User(AbstractBaseUser):
     ROLE_CHOICES = [
@@ -16,12 +17,15 @@ class User(AbstractBaseUser):
     userId = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
-    passwordHash = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     phone = models.CharField(max_length=15, null=True, blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
+    reset_password_token = models.CharField(max_length=36, null=True, blank=True)  # UUID token
+    reset_token_created_at = models.DateTimeField(null=True, blank=True)  # Token timestamp
+
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
@@ -31,7 +35,7 @@ class User(AbstractBaseUser):
     
     class Meta:
         db_table = 'User'
-        managed = False
+        managed = True
 
 
 # 2. Farmer Model
@@ -57,7 +61,7 @@ class Farmer(models.Model):
     
     class Meta:
         db_table = 'Farmer'
-        managed = False
+        managed = True
 
 # 3. Product Model
 class Product(models.Model):
@@ -84,7 +88,7 @@ class Product(models.Model):
     
     class Meta:
         db_table = 'Product'
-        managed = False
+        managed = True
 
 # 4. Order Model
 class Order(models.Model):
@@ -108,7 +112,7 @@ class Order(models.Model):
     
     class Meta:
         db_table = 'Order'
-        managed = False
+        managed = True
 
 # 5. Cart Model (for Customers)
 class Cart(models.Model):
@@ -124,7 +128,7 @@ class Cart(models.Model):
     
     class Meta:
         db_table = 'Cart'
-        managed = False
+        managed = True
 
 # 6. Review Model
 class Review(models.Model):
@@ -141,7 +145,7 @@ class Review(models.Model):
     
     class Meta:
         db_table = 'Review'
-        managed = False
+        managed = True
 
 # 7. Admin Activity Log Model
 class AdminActivityLog(models.Model):
@@ -156,4 +160,4 @@ class AdminActivityLog(models.Model):
     
     class Meta:
         db_table = 'AdminActivityLog'
-        managed = False
+        managed = True

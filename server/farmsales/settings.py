@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'farmapp',  
+    'rest_framework',  
+    'rest_framework.authtoken', 
 ]
 
 MIDDLEWARE = [
@@ -75,15 +81,14 @@ WSGI_APPLICATION = 'farmsales.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'CropCircle',
-        'USER': 'backend_team',
-        'PASSWORD': 'Akogo660221.',
+        'USER': f'{os.getenv('DB_USER')}',
+        'PASSWORD': f'{os.getenv('DB_PASSWORD')}',
         'HOST': 'localhost',
-        'PORT': '3306',
+        'PORT': '3306', 
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -125,3 +130,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# settings.py
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'archillesjacob2@gmail.com'
+EMAIL_HOST_PASSWORD = f'{os.getenv('password')}' # or App Password
+EMAIL_USE_TLS = True
