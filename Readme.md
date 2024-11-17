@@ -165,8 +165,8 @@ After pushing their feature branch to their forked repository, they should creat
    - The head repository should be your forked repo (`username/your-repo`) and the feature branch they worked on.
 4. **Add a PR Description**:
    - Describe the changes made, any issues it solves, and relevant details.
-   - For Frontend start with "Frontend:<pull request description here>"
-   - For Frontend start with "Backend:<pull request description here>"
+   - For Frontend start with "Frontend:pull request description here"
+   - For Backend start with "Backend:pull request description here"
 5. **Submit the PR**:
    - Click **Create Pull Request** to submit it for review.
 

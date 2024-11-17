@@ -1,0 +1,80 @@
+
+/* Heading Styles */
+.overview h1 {
+    color: rgb(11, 156, 76);
+    font-size: larger;
+    margin-bottom: 1rem;
+    background-color: white;
+}
+
+
+ .overview .saleAnalysis .totalSale p {
+    font-size: 1.5rem;
+}
+
+ .overview .topSellingProduct p {
+    font-size: 1.5rem;
+}
+
+/* Sale Analysis Section */
+.overview .saleAnalysis {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    row-gap: 1rem;
+    column-gap: 2rem;
+    background-color: rgb(8, 116, 62);
+    padding: 1rem;
+    margin-bottom: 2rem;
+
+}
+
+/* Product Cards */
+ .overview .totalSale,
+.topSellingProduct {
+    background-color: white;
+    color: rgb(11, 156, 76);
+    /* width: 15rem; */
+    padding: 1rem;
+    border-radius: 10px;
+    border-bottom: 3px solid rgb(17, 194, 97);
+    box-shadow: 1px -5px 34px -11px rgb(11, 156, 76);
+    position: relative;
+}
+
+/* Image Icon */
+.images {
+    position: absolute;
+    width: 2rem;
+    right: 0;
+    bottom: 0;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background-color: rgb(11, 156, 76);
+    border-radius: 10px 0;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: rgb(8, 116, 62);
+    color: white;
+}
+
+/* Link Styles */
+.link {
+    color: green;
+    text-decoration: none;
+    float: right;
+    padding: 1rem;
+}

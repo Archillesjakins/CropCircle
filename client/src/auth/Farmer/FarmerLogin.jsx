@@ -1,23 +1,30 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import FarmerLoginBg from "../../assets/Background-images/young-asian-farmer-with-smartphone 1.png";
 
+
 const FarmerLogin = () => {
+  const navigate = useNavigate();
   const formData = {
     email: "",
     password: "",
   };
-
-  const dummyData = {
+  const DummyData = {
     email: "admin@admin.com",
-    password: "123",
+    password: "789",
   };
 
-  const [error, setError] = React.useState("");
-
   const [form, setForm] = React.useState(formData);
+  const [error, setError] = React.useState("");
+  const [emailError, setEmailError] = React.useState("");
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
   function Handlechange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
-    console.log(form);
+    if (!emailRegex.test(e.target.value)) {
+      setEmailError("Please Enter a valid email address");
+    }
   }
 
   function HandleSubmit(e) {
@@ -30,38 +37,45 @@ const FarmerLogin = () => {
       setError("Please enter both email and password");
       return;
     }
-
-    try{
-      //const response = await fetch("http://...", form) 
-
-      if(form.email === dummyData.email && form.password === dummyData.password){
-        alert("Admin Login Successful");
-        window.location.href = "/farmer/dashboard";
-      }else{
-        setError("Wrong Credentials");
-      }
+    if (
+      form.email === DummyData.email &&
+      form.password === DummyData.password
+    ) {
+      window.location.href = "/farmer/overview";
     }
-    catch(error){
-      setError("Something went wrong");
+    else{
+      alert("Wrong Credentials");
+      setForm(formData);
     }
+    // try {
+    //   //const response = await fetch("http://...", form)
+
+    //   if (
+    //     form.email === dummyData.email &&
+    //     form.password === dummyData.password
+    //   ) {
+    //     alert("Admin Login Successful");
+    //     window.location.href = "/farmer/dashboard";
+    //   } else {
+    //     setError("Wrong Credentials");
+    //   }
+    // } catch (error) {
+    //   setError("Something went wrong");
+    // }
 
     console.log(form);
   }
   return (
     <div
-      className="flex h-screen bg-auto bg-no-repeat bg-right"
+      className="flex items-center justify-center h-screen bg-right bg-no-repeat bg-cover lg:justify-start lg:bg-auto"
       style={{ backgroundImage: `url(${FarmerLoginBg})` }}
     >
-      <div
-        className="flex flex-col items-center w-full md:w-1/2 bg-white p-8 md:p-16 border border-green-400 "
-        style={{
-          borderBottomRightRadius: "3.4rem",
-          borderTopRightRadius: "3.4rem",
-        }}
-      >
-        <h1 className="text-green-600 text-3xl font-bold">FARMER SIGN IN</h1>
-        <h2 className="text-xl font-semibold mt-4">Welcome Back</h2>
-        <p className="text-gray-500 mt-2">Sign in to continue</p>
+
+      <div className="flex flex-col items-center justify-center w-10/12 p-8 pb-12 bg-white border border-green-400 md:w-3/4 lg:w-1/2 lg:h-lvh lg:p-24 opacity-90 md:p-16 rounded-3xl lg:rounded-tl-none lg:rounded-bl-none ">
+        <h1 className="text-3xl font-bold text-green-600">FARMER SIGN IN</h1>
+        <h2 className="mt-4 text-xl font-semibold">Welcome Back</h2>
+        <p className="mt-2 text-gray-500">Sign in to continue</p>
+
         <form onSubmit={HandleSubmit} action="" className="mt-8 space-y-4">
           <input
             type="email"
@@ -69,7 +83,7 @@ const FarmerLogin = () => {
             name="email"
             value={form.email}
             onChange={Handlechange}
-            className="w-full p-3 border border-gray-400 focus:outline-none focus:border-green-500 rounded"
+            className="w-full p-3 border border-gray-400 rounded focus:outline-none focus:border-green-500"
           />
           <input
             type="password"
@@ -77,15 +91,24 @@ const FarmerLogin = () => {
             name="password"
             value={form.password}
             onChange={Handlechange}
-            className="w-full p-3 border border-gray-400 focus:outline-none focus:border-green-500 rounded"
+            className="w-full p-3 border border-gray-400 rounded focus:outline-none focus:border-green-500"
           />
           <button
             type="submit"
-            className="w-full bg-green-600 text-white p-3 rounded hover:bg-green-700"
+            className="w-full p-3 text-white bg-green-600 rounded-xl hover:bg-green-700"
           >
             Sign In
           </button>
         </form>
+        <p className="mt-4 text-sm text-center text-gray-500">
+          Don't have an account?{" "}
+          <button
+            onClick={() => navigate("/farmer/signup")}
+            className="text-green-600 cursor-pointer"
+          >
+            Log In
+          </button>
+        </p>
       </div>
     </div>
   );
