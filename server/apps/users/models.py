@@ -4,14 +4,14 @@ import pyotp
 
 class User(AbstractUser):
     userId = models.AutoField(primary_key=True)
-    user_name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=50, choices=[('farmer', 'Farmer'), ('customer', 'Customer'), ('admin', 'Admin')])
     phone = models.CharField(max_length=20, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
-    otp_secret = models.CharField(max_length=16, default=pyotp.random_base32)
+    otp_secret = models.CharField(max_length=50, default=pyotp.random_base32)
 
     groups = models.ManyToManyField(
         'auth.Group',
@@ -29,7 +29,12 @@ class User(AbstractUser):
     )
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['user_name', 'role']
+    REQUIRED_FIELDS = ['name', 'role']
+
+    def save(self, *args, **kwargs):
+        if not self.username:
+            self.username = self.email 
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name

@@ -14,6 +14,8 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import force_str, force_bytes
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 import pyotp
+from rest_framework.permissions import AllowAny
+from .tokens import email_verification_token
 
 
 
