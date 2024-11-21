@@ -29,6 +29,11 @@ class ResetPasswordSerializer(serializers.Serializer):
     token = serializers.CharField()
     new_password = serializers.CharField(write_only=True)
 
+class UserStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['userId', 'name', 'email', 'is_active', 'role']
+        
 # Order Management Serializers
 class OrderDetailSerializer(serializers.ModelSerializer):
     """

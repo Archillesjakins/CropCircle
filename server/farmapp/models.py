@@ -24,6 +24,7 @@ class User(AbstractBaseUser):
     reset_password_token = models.CharField(max_length=36, null=True, blank=True)  # UUID token
     reset_token_created_at = models.DateTimeField(null=True, blank=True)  # Token timestamp
     last_login = models.DateTimeField(null=True, blank=True)  # Last login timestamp
+    is_active = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']

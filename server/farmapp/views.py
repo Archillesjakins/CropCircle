@@ -17,7 +17,7 @@ from .models import User, Farmer, Order, Product, Review
 from .serializers import (
     RegisterSerializer, LoginSerializer, ChangePasswordSerializer, 
     ForgotPasswordSerializer, ResetPasswordSerializer, OrderDetailSerializer, 
-    OrderStatusUpdateSerializer
+    OrderStatusUpdateSerializer, UserStatusSerializer
 )
 
 # JWT Utility
@@ -28,12 +28,15 @@ def generate_jwt(user):
 
 # Authentication Views
 class RegisterView(APIView):
+    
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
             return Response({"message": "User registered successfully."}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class LoginView(APIView):
     def post(self, request):
@@ -48,12 +51,15 @@ class LoginView(APIView):
 
             if not check_password(password, user.password):
                 return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
             if not user.is_active:
                 return Response({"error": "Email not verified."}, status=status.HTTP_403_FORBIDDEN)
 
-            token = generate_jwt(user)
-            return Response({"token": token}, status=status.HTTP_200_OK)
-
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+            }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ChangePasswordView(APIView):
@@ -117,10 +123,18 @@ class ResetPasswordView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CheckStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         user = request.user
-        return Response({"user": {"id": user.userId, "name": user.name, "email": user.email}}, status=status.HTTP_200_OK)
+        if not user.is_active:
+            return Response({"error": "User account is Inactive!."}, status=403)
 
+        serializer = UserStatusSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+    
+    
 class SignoutView(APIView):
     def post(self, request):
         return Response({"message": "Successfully signed out."}, status=status.HTTP_200_OK)
