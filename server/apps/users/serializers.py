@@ -4,6 +4,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
+from .models import OTP
 
 User = get_user_model()
 
@@ -25,6 +26,44 @@ class LoginSerializer(serializers.Serializer):
         raise serializers.ValidationError("Invalid credentials or not an admin user")
     
 
+# class RegisterSerializer(serializers.ModelSerializer):
+#     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+#     password2 = serializers.CharField(write_only=True, required=True)
+
+#     class Meta:
+#         model = User
+#         fields = ('name', 'email', 'password', 'password2', 'role')
+
+#     def validate(self, attrs):
+#         if attrs['password'] != attrs['password2']:
+#             raise serializers.ValidationError({"password": "Password fields didn't match."})
+#         return attrs
+
+    # def create(self, validated_data):
+    #     user = User.objects.create(
+    #         name=validated_data['name'],
+    #         email=validated_data['email'],
+    #         role=validated_data['role']
+    #     )
+    #     user.set_password(validated_data['password'])
+    #     user.save()
+    #     return user
+    # def create(self, validated_data):
+    #     # Remove password2 from validated_data
+    #     validated_data.pop('password2', None)
+        
+    #     # Create user using create_user method
+    #     user = User.objects.create_user(
+    #         username=validated_data['email'],  # Set username to email
+    #         email=validated_data['email'],
+    #         name=validated_data['name'],
+    #         role=validated_data['role'],
+    #         password=validated_data['password'],  # create_user handles password hashing
+    #         # is_active=False 
+    #     )
+        
+    #     return user
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
@@ -38,30 +77,22 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"password": "Password fields didn't match."})
         return attrs
 
-    # def create(self, validated_data):
-    #     user = User.objects.create(
-    #         name=validated_data['name'],
-    #         email=validated_data['email'],
-    #         role=validated_data['role']
-    #     )
-    #     user.set_password(validated_data['password'])
-    #     user.save()
-    #     return user
     def create(self, validated_data):
-        # Remove password2 from validated_data
         validated_data.pop('password2', None)
-        
-        # Create user using create_user method
         user = User.objects.create_user(
-            username=validated_data['email'],  # Set username to email
+            username=validated_data['email'],
             email=validated_data['email'],
             name=validated_data['name'],
             role=validated_data['role'],
-            password=validated_data['password'],  # create_user handles password hashing
-            # is_active=False 
+            password=validated_data['password'],
+            is_active=False  # User is inactive until OTP is verified
         )
-        
         return user
+
+class OTPVerifySerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    otp_code = serializers.CharField(max_length=6)
+    
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -70,7 +101,7 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get('email')
         password = data.get('password')
-        user = authenticate(name=email, password=password)
+        user = authenticate(username=email, password=password)
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Invalid credentials")

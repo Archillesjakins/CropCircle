@@ -1,8 +1,9 @@
+from datetime import datetime
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import User
-from .serializers import UserSerializer, LoginSerializer,RegisterSerializer, LoginSerializer, VerifyEmailSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, TwoFactorAuthSerializer
+from .models import User, OTP
+from .serializers import UserSerializer, LoginSerializer,RegisterSerializer, OTPVerifySerializer, LoginSerializer, VerifyEmailSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, TwoFactorAuthSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate, login, logout
@@ -16,10 +17,13 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 import pyotp
 from rest_framework.permissions import AllowAny
 from .tokens import email_verification_token
+from django.contrib.auth import get_user_model
+import random
+import string
+from django.utils import timezone
+    
 
-
-
-
+User = get_user_model()
 
 class UserListView(generics.ListAPIView):
     serializer_class = UserSerializer
@@ -55,17 +59,120 @@ class UserStatusUpdateView(APIView):
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         
 
+# class LoginView(APIView):
+#     def post(self, request):
+#         serializer = LoginSerializer(data=request.data)
+#         if serializer.is_valid():
+#             user = serializer.validated_data
+#             refresh = RefreshToken.for_user(user)
+#             return Response({
+#                 'refresh': str(refresh),
+#                 'access': str(refresh.access_token),
+#             })
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class LoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.validated_data
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-            })
+            otp_code = generate_otp()
+            OTP.objects.create(user=user, otp_code=otp_code)
+            send_mail(
+                'Your OTP Code',
+                f'Your OTP code is {otp_code}',
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
+            )
+            return Response({'status': 'OTP sent to your email'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OTPLoginVerifyView(APIView):
+    def post(self, request):
+        serializer = OTPVerifySerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            otp_code = serializer.validated_data['otp_code']
+            try:
+                user = User.objects.get(email=email)
+                otp = OTP.objects.get(user=user, otp_code=otp_code)
+                
+                if otp.expires_at > timezone.now():
+                    # Create token with additional claims
+                    refresh = RefreshToken.for_user(user)
+                    refresh['email'] = user.email
+                    refresh['name'] = user.name
+                    refresh['role'] = user.role
+                    
+                    # Delete the used OTP
+                    otp.delete()
+                    
+                    return Response({
+                        'refresh': str(refresh),
+                        'access': str(refresh.access_token),
+                        'user': {
+                            'userId': user.userId,
+                            'email': user.email,
+                            'name': user.name,
+                            'role': user.role,
+                            # 'phone': user.phone,
+                        }
+                    }, status=status.HTTP_200_OK)
+                else:
+                    return Response({
+                        'error': 'OTP expired'
+                    }, status=status.HTTP_400_BAD_REQUEST)
+                    
+            except User.DoesNotExist:
+                return Response({
+                    'error': 'User not found'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            except OTP.DoesNotExist:
+                return Response({
+                    'error': 'Invalid OTP'
+                }, status=status.HTTP_400_BAD_REQUEST)
+                
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class OTPLoginVerifyView(APIView):
+#     def post(self, request):
+#         serializer = OTPVerifySerializer(data=request.data)
+#         if serializer.is_valid():
+#             email = serializer.validated_data['email']
+#             otp_code = serializer.validated_data['otp_code']
+#             try:
+#                 user = User.objects.get(email=email)
+#                 otp = OTP.objects.get(user=user, otp_code=otp_code)
+#                 if otp.expires_at > timezone.now():
+#                     refresh = RefreshToken.for_user(user)
+#                     otp.delete()
+#                     return Response({
+#                         'refresh': str(refresh),
+#                         'access': str(refresh.access_token),
+#                     }, status=status.HTTP_200_OK)
+#                 else:
+#                     return Response({'error': 'OTP expired'}, status=status.HTTP_400_BAD_REQUEST)
+#             except (User.DoesNotExist, OTP.DoesNotExist):
+#                 return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# class LoginView(APIView):
+#     def post(self, request):
+#         serializer = LoginSerializer(data=request.data)
+#         if serializer.is_valid():
+#             user = serializer.validated_data
+#             login(request, user)
+#             refresh = RefreshToken.for_user(user)
+#             return Response({
+#                 'refresh': str(refresh),
+#                 'access': str(refresh.access_token),
+#             })
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class AdminOnlyView(APIView):
     permission_classes = [IsAuthenticated]
@@ -75,22 +182,74 @@ class AdminOnlyView(APIView):
             return Response({'error': 'You do not have permission to access this resource'}, status=status.HTTP_403_FORBIDDEN)
         return Response({'message': 'Welcome, admin!'}, status=status.HTTP_200_OK)
     
+# class RegisterView(generics.CreateAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = RegisterSerializer
+
+def generate_otp(length=6):
+    digits = string.digits
+    otp = ''.join(random.choices(digits, k=length))
+    return otp
+
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
 
-class LoginView(APIView):
+    def perform_create(self, serializer):
+        user = serializer.save()
+        otp_code = generate_otp()
+        OTP.objects.create(user=user, otp_code=otp_code)
+        send_mail(
+            'Your OTP Code',
+            f'Your OTP code is {otp_code}',
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
+
+class OTPVerifyView(APIView):
     def post(self, request):
-        serializer = LoginSerializer(data=request.data)
+        serializer = OTPVerifySerializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.validated_data
-            login(request, user)
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-            })
+            email = serializer.validated_data['email']
+            otp_code = serializer.validated_data['otp_code']
+            try:
+                user = User.objects.get(email=email)
+                otp = OTP.objects.get(user=user, otp_code=otp_code)
+                if otp.expires_at > timezone.now():
+                    user.is_active = True
+                    user.save()
+                    otp.delete()
+                    return Response({'status': 'success'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'error': 'OTP expired'}, status=status.HTTP_400_BAD_REQUEST)
+            except (User.DoesNotExist, OTP.DoesNotExist):
+                return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class OTPVerifyView(APIView):
+#     def post(self, request):
+#         serializer = OTPVerifySerializer(data=request.data)
+#         if serializer.is_valid():
+#             email = serializer.validated_data['email']
+#             otp_code = serializer.validated_data['otp_code']
+#             try:
+#                 user = User.objects.get(email=email)
+#                 otp = OTP.objects.get(user=user, otp_code=otp_code)
+#                 if otp.expires_at > datetime.now():
+#                     user.is_active = True
+#                     user.save()
+#                     otp.delete()
+#                     return Response({'status': 'success'}, status=status.HTTP_200_OK)
+#                 else:
+#                     return Response({'error': 'OTP expired'}, status=status.HTTP_400_BAD_REQUEST)
+#             except (User.DoesNotExist, OTP.DoesNotExist):
+#                 return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]

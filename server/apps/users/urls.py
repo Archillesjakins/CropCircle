@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserListView, UserDetailView, UserStatusUpdateView, LoginView, AdminOnlyView, RegisterView, LoginView, LogoutView, VerifyEmailView, ForgotPasswordView, ResetPasswordView, CheckStatusView, TwoFactorAuthView, VerifyTwoFactorAuthView, ConfirmEmailView
+from .views import UserListView, UserDetailView, UserStatusUpdateView, LoginView, AdminOnlyView, RegisterView, LoginView, OTPLoginVerifyView, LogoutView, VerifyEmailView, ForgotPasswordView, ResetPasswordView, CheckStatusView, TwoFactorAuthView, VerifyTwoFactorAuthView, ConfirmEmailView, OTPVerifyView
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 import six
 
@@ -12,14 +12,16 @@ class EmailVerificationTokenGenerator(PasswordResetTokenGenerator):
 email_verification_token = EmailVerificationTokenGenerator()
 
 urlpatterns = [
-    path('admin/users/', UserListView.as_view(), name='user-list'),
-    path('admin/users/<int:userId>/', UserDetailView.as_view(), name='user-detail'),
-    path('admin/users/<int:userId>/status/', UserStatusUpdateView.as_view(), name='user-status-update'),
-    path('admin/login/', LoginView.as_view(), name='admin-login'),
-    path('admin/dashboard/', AdminOnlyView.as_view(), name='admin-dashboard'),
-    path('farmer/auth/register/', RegisterView.as_view(), name='farmer-register'),
-    path('farmer/auth/login/', LoginView.as_view(), name='farmer-login'),
-    path('auth/logout/', LogoutView.as_view(), name='logout'),
+    path('admin/users/', UserListView.as_view(), name='user-list'),  # tested
+    path('admin/users/<int:userId>/', UserDetailView.as_view(), name='user-detail'), # tested
+    path('admin/users/<int:userId>/status/', UserStatusUpdateView.as_view(), name='user-status-update'), # almost tested
+    path('admin/login/', LoginView.as_view(), name='admin-login'), # tested
+    path('admin/dashboard/', AdminOnlyView.as_view(), name='admin-dashboard'), # tested
+    path('farmer/auth/register/', RegisterView.as_view(), name='farmer-register'), # tested
+    path('farmaer/auth/verify-otp/', OTPVerifyView.as_view(), name='verify-otp'),
+    path('farmer/auth/login/', LoginView.as_view(), name='farmer-login'), # tested
+    path('farmer/auth/verify-login-otp/', OTPLoginVerifyView.as_view(), name='verify-login-otp'),
+    path('auth/logout/', LogoutView.as_view(), name='logout'), # tested
     path('auth/verify-email/', VerifyEmailView.as_view(), name='verify-email'),
     path('auth/confirm-email/<str:token>/', ConfirmEmailView.as_view(), name='confirm-email'),
     path('auth/forgot-password/', ForgotPasswordView.as_view(), name='forgot-password'),
